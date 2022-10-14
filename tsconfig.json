@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2019",
+    "incremental": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["./src/*"]
+    },
+    "typeRoots": ["./node_modules/@types"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "test", "dist"]
+}
