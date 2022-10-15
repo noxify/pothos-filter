@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "DEBUG=1 tsx watch src/server.ts",
     "start": "tsx src/server.ts",
     "cli:run": "tsx src/codegen/cli.ts",
     "cli:generateindex": "tsx src/codegen/cli.ts --onlyindex true",

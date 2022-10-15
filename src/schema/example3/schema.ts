@@ -1,9 +1,7 @@
 import {
-  FilterInputInterface,
-  Example2Interface,
-  Example2SubInterface,
-  SortOrderInterface,
-} from 'src/schema/example2/interface'
+  Example3Interface,
+  Example3SubInterface,
+} from 'src/schema/example3/interface'
 
 import {
   builder,
@@ -15,66 +13,50 @@ import {
 import { getSelectFields } from 'src/helpers/graphql'
 import { generateSqlQuery } from 'src/helpers/query-builder'
 
-const FilterInput = builder
-  .inputRef<FilterInputInterface>('Example2FilterInput')
-  .implement({
-    fields: (t) => ({
-      //@ts-ignore
-      name: t.field({
-        type: StringComparisonInput,
-      }),
-      //@ts-ignore
-      birthdate: t.field({
-        type: StringComparisonInput,
-      }),
-      //@ts-ignore
-      height: t.field({
-        type: IntComparisonInput,
-      }),
-      and: t.field({
-        type: [FilterInput],
-      }),
-      or: t.field({
-        type: [FilterInput],
-      }),
-    }),
-  })
+// const StringComparisonInput = createStringFieldComparison({})
+// const IntComparisonInput = createIntFieldComparison({})
 
-export const SortFields = builder.enumType('Example2SortFields', {
+const FilterInputNew = builder.inputRef('Example3FilterInputNew').implement({
+  fields: (t) => ({
+    name: t.field({ type: StringComparisonInput }),
+    birthdate: t.field({ type: StringComparisonInput }),
+    height: t.field({ type: IntComparisonInput }),
+    and: t.field({ type: [FilterInputNew] }),
+    or: t.field({ type: [FilterInputNew] }),
+  }),
+})
+
+export const SortFields = builder.enumType('Example3SortFields', {
   values: ['name', 'birthday', 'height'] as const,
 })
 
-const SortingInput = builder
-  .inputRef<SortOrderInterface>('Example2SortOrder')
-  .implement({
-    fields: (t) => ({
-      //@ts-ignore
-      field: t.field({
-        type: SortFields,
-      }),
-      //@ts-ignore
-      direction: t.field({
-        type: SortDirection,
-      }),
+const SortingInput = builder.inputType('Example3SortOrder', {
+  fields: (t) => ({
+    field: t.field({
+      type: SortFields,
     }),
-  })
+    direction: t.field({
+      type: SortDirection,
+    }),
+  }),
+})
 
-export const Example2 = builder.objectRef<Example2Interface>('Example2')
+export const Example3 = builder.objectRef<Example3Interface>('Example3')
 
-export const Example2Sub =
-  builder.objectRef<Example2SubInterface>('Example2Sub')
+export const Example3Sub =
+  builder.objectRef<Example3SubInterface>('Example3Sub')
 
-Example2.implement({
+Example3.implement({
   fields: (t) => ({
     name: t.exposeString('name'),
     birthdate: t.exposeString('birthdate'),
     height: t.exposeFloat('height'),
-    sub: t.expose('sub', { type: Example2Sub }),
-    subMany: t.expose('subMany', { type: [Example2Sub] }),
+    sub: t.expose('sub', { type: Example3Sub }),
+    subMany: t.expose('subMany', { type: [Example3Sub] }),
   }),
 })
 
-Example2Sub.implement({
+Example3Sub.implement({
   fields: (t) => ({
     name1: t.exposeString('name1'),
     birthdate1: t.exposeString('birthdate1'),
@@ -83,10 +65,10 @@ Example2Sub.implement({
 })
 
 builder.queryFields((t) => ({
-  example2: t.field({
-    type: [Example2],
+  example3: t.field({
+    type: [Example3],
     args: {
-      filter: t.arg({ type: FilterInput, required: false }),
+      filter: t.arg({ type: FilterInputNew, required: false }),
       paging: t.arg({ type: Paging, required: false }),
       sorting: t.arg({ type: [SortingInput], required: false }),
     },
@@ -95,7 +77,7 @@ builder.queryFields((t) => ({
       const query = generateSqlQuery({
         select: selectFields,
         schema: 'example_schema',
-        tableName: 'example2',
+        tableName: 'example3',
         filter: args.filter,
         paging: args.paging,
         sorting: args.sorting as unknown as {
