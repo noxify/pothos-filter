@@ -1,7 +1,7 @@
 import {
-  Example3Interface,
-  Example3SubInterface,
-} from 'src/schema/example3/interface'
+  Example2Interface,
+  Example2SubInterface,
+} from 'src/schema/example2/interface'
 
 import {
   builder,
@@ -11,7 +11,7 @@ import {
   StringComparisonInput,
 } from 'src/builder'
 
-const FilterInput = builder.inputRef('Example3FilterInput').implement({
+const FilterInput = builder.inputRef('Example2FilterInput').implement({
   fields: (t) => ({
     name: t.field({ type: StringComparisonInput }),
     birthdate: t.field({ type: StringComparisonInput }),
@@ -21,11 +21,11 @@ const FilterInput = builder.inputRef('Example3FilterInput').implement({
   }),
 })
 
-export const SortFields = builder.enumType('Example3SortFields', {
+export const SortFields = builder.enumType('Example2SortFields', {
   values: ['name', 'birthday', 'height'] as const,
 })
 
-const SortingInput = builder.inputType('Example3SortOrder', {
+const SortingInput = builder.inputType('Example2SortOrder', {
   fields: (t) => ({
     field: t.field({
       type: SortFields,
@@ -36,22 +36,22 @@ const SortingInput = builder.inputType('Example3SortOrder', {
   }),
 })
 
-export const Example3 = builder.objectRef<Example3Interface>('Example3')
+export const Example2 = builder.objectRef<Example2Interface>('Example2')
 
-export const Example3Sub =
-  builder.objectRef<Example3SubInterface>('Example3Sub')
+export const Example2Sub =
+  builder.objectRef<Example2SubInterface>('Example2Sub')
 
-Example3.implement({
+Example2.implement({
   fields: (t) => ({
     name: t.exposeString('name'),
     birthdate: t.exposeString('birthdate'),
     height: t.exposeFloat('height'),
-    sub: t.expose('sub', { type: Example3Sub }),
-    subMany: t.expose('subMany', { type: [Example3Sub] }),
+    sub: t.expose('sub', { type: Example2Sub }),
+    subMany: t.expose('subMany', { type: [Example2Sub] }),
   }),
 })
 
-Example3Sub.implement({
+Example2Sub.implement({
   fields: (t) => ({
     name1: t.exposeString('name1'),
     birthdate1: t.exposeString('birthdate1'),
@@ -60,8 +60,8 @@ Example3Sub.implement({
 })
 
 builder.queryFields((t) => ({
-  example3: t.field({
-    type: [Example3],
+  example2: t.field({
+    type: [Example2],
     args: {
       filter: t.arg({ type: FilterInput, required: false }),
       paging: t.arg({ type: Paging, required: false }),
@@ -85,7 +85,7 @@ builder.queryFields((t) => ({
               height1: 7.5,
             },
             {
-              name1: 'test3',
+              name1: 'test2',
               birthdate1: '2022-10-04',
               height1: 7.5,
             },
