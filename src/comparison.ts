@@ -1,11 +1,6 @@
 import { builder } from './builder'
 import { InputFieldRef } from '@pothos/core'
 
-type FieldComparisonArgs = {
-  name: string
-  table: string
-}
-
 type AllowedOperators =
   | 'is'
   | 'isNot'
@@ -22,14 +17,14 @@ type AllowedOperators =
 
 const generateComparison = ({
   name,
-  table,
   type,
   allowedOperators,
-}: FieldComparisonArgs & {
+}: {
+  name?: string
   type: any
-  allowedOperators?: AllowedOperators[]
+  allowedOperators: AllowedOperators[]
 }) => {
-  return builder.inputType(`${table}_${name}_${type}FieldComparison`, {
+  return builder.inputType(`${name || type}FieldComparison`, {
     fields: (t) => {
       const operators: { [key: string]: InputFieldRef<any, 'InputObject'> } = {
         is: t.boolean({}),
@@ -61,53 +56,57 @@ const generateComparison = ({
   })
 }
 
-export const createStringFieldComparison = (args: FieldComparisonArgs) => {
+export const createStringFieldComparison = ({ name }: { name?: string }) => {
   return generateComparison({
-    ...args,
+    name,
     type: 'String',
     allowedOperators: ['eq', 'neq', 'like', 'notLike', 'in', 'notIn'],
   })
 }
 
-export const createIntFieldComparison = (args: FieldComparisonArgs) => {
+export const createIntFieldComparison = ({ name }: { name?: string }) => {
   return generateComparison({
-    ...args,
+    name,
     type: 'Int',
     allowedOperators: ['eq', 'neq', 'lt', 'lte', 'gt', 'gte', 'in', 'notIn'],
   })
 }
 
-export const createFloatFieldComparison = (args: FieldComparisonArgs) => {
+export const createFloatFieldComparison = ({ name }: { name?: string }) => {
   return generateComparison({
-    ...args,
+    name,
     type: 'Float',
     allowedOperators: ['eq', 'neq', 'lt', 'lte', 'gt', 'gte', 'in', 'notIn'],
   })
 }
 
-export const createIDFieldComparison = (args: FieldComparisonArgs) => {
-  return generateComparison({ ...args, type: 'ID' })
+export const createIDFieldComparison = ({ name }: { name?: string }) => {
+  return generateComparison({
+    name,
+    type: 'ID',
+    allowedOperators: ['eq', 'neq', 'in', 'notIn'],
+  })
 }
 
-export const createBooleanFieldComparison = (args: FieldComparisonArgs) => {
+export const createBooleanFieldComparison = ({ name }: { name?: string }) => {
   return generateComparison({
-    ...args,
+    name,
     type: 'Boolean',
     allowedOperators: ['is', 'isNot'],
   })
 }
 
-export const createDateFieldComparison = (args: FieldComparisonArgs) => {
+export const createDateFieldComparison = ({ name }: { name?: string }) => {
   return generateComparison({
-    ...args,
+    name,
     type: 'Date',
     allowedOperators: ['eq', 'neq', 'lt', 'lte', 'gt', 'gte'],
   })
 }
 
-export const createDateTimeFieldComparison = (args: FieldComparisonArgs) => {
+export const createDateTimeFieldComparison = ({ name }: { name?: string }) => {
   return generateComparison({
-    ...args,
+    name,
     type: 'DateTime',
     allowedOperators: ['eq', 'neq', 'lt', 'lte', 'gt', 'gte'],
   })

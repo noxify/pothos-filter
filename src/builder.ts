@@ -1,5 +1,9 @@
 import { DateTimeResolver } from 'graphql-scalars'
 import SchemaBuilder from '@pothos/core'
+import {
+  createStringFieldComparison,
+  createIntFieldComparison,
+} from 'src/comparison'
 
 export const builder = new SchemaBuilder<{
   Scalars: {
@@ -28,5 +32,8 @@ export const Paging = builder.inputType('Paging', {
     skip: t.int(),
   }),
 })
+
+export const StringComparisonInput = createStringFieldComparison({})
+export const IntComparisonInput = createIntFieldComparison({})
 
 builder.addScalarType('DateTime', DateTimeResolver, {})

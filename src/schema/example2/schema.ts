@@ -1,64 +1,40 @@
 import {
-  FilterInputInterface,
   Example2Interface,
   Example2SubInterface,
-  SortOrderInterface,
 } from 'src/schema/example2/interface'
+
 import {
-  createIntFieldComparison,
-  createStringFieldComparison,
-} from 'src/comparison'
+  builder,
+  IntComparisonInput,
+  Paging,
+  SortDirection,
+  StringComparisonInput,
+} from 'src/builder'
 
-import { builder, Paging, SortDirection } from 'src/builder'
-import { getSelectFields } from 'src/helpers/graphql'
-import { generateSqlQuery } from 'src/helpers/query-builder'
-
-const FilterInput = builder
-  .inputRef<FilterInputInterface>('Example2FilterInput')
-  .implement({
-    fields: (t) => ({
-      //@ts-ignore
-      name: t.field({
-        type: createStringFieldComparison({ table: 'example2', name: 'name' }),
-      }),
-      //@ts-ignore
-      birthdate: t.field({
-        type: createStringFieldComparison({
-          table: 'example2',
-          name: 'birthdate',
-        }),
-      }),
-      //@ts-ignore
-      height: t.field({
-        type: createIntFieldComparison({ table: 'example2', name: 'height' }),
-      }),
-      and: t.field({
-        type: [FilterInput],
-      }),
-      or: t.field({
-        type: [FilterInput],
-      }),
-    }),
-  })
+const FilterInput = builder.inputRef('Example2FilterInput').implement({
+  fields: (t) => ({
+    name: t.field({ type: StringComparisonInput }),
+    birthdate: t.field({ type: StringComparisonInput }),
+    height: t.field({ type: IntComparisonInput }),
+    and: t.field({ type: [FilterInput] }),
+    or: t.field({ type: [FilterInput] }),
+  }),
+})
 
 export const SortFields = builder.enumType('Example2SortFields', {
   values: ['name', 'birthday', 'height'] as const,
 })
 
-const SortingInput = builder
-  .inputRef<SortOrderInterface>('Example2SortOrder')
-  .implement({
-    fields: (t) => ({
-      //@ts-ignore
-      field: t.field({
-        type: SortFields,
-      }),
-      //@ts-ignore
-      direction: t.field({
-        type: SortDirection,
-      }),
+const SortingInput = builder.inputType('Example2SortOrder', {
+  fields: (t) => ({
+    field: t.field({
+      type: SortFields,
     }),
-  })
+    direction: t.field({
+      type: SortDirection,
+    }),
+  }),
+})
 
 export const Example2 = builder.objectRef<Example2Interface>('Example2')
 
@@ -91,22 +67,7 @@ builder.queryFields((t) => ({
       paging: t.arg({ type: Paging, required: false }),
       sorting: t.arg({ type: [SortingInput], required: false }),
     },
-    resolve: (parent, args, context, info) => {
-      const selectFields = getSelectFields(info)
-      const query = generateSqlQuery({
-        select: selectFields,
-        schema: 'example_schema',
-        tableName: 'example2',
-        filter: args.filter,
-        paging: args.paging,
-        sorting: args.sorting as unknown as {
-          field: string
-          direction: string
-        }[],
-      })
-
-      console.log({ selectFields, query })
-
+    resolve: () => {
       return [
         {
           name: 'test',
@@ -124,7 +85,7 @@ builder.queryFields((t) => ({
               height1: 7.5,
             },
             {
-              name1: 'test3',
+              name1: 'test2',
               birthdate1: '2022-10-04',
               height1: 7.5,
             },
