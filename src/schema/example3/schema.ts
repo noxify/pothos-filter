@@ -10,19 +10,14 @@ import {
   SortDirection,
   StringComparisonInput,
 } from 'src/builder'
-import { getSelectFields } from 'src/helpers/graphql'
-import { generateSqlQuery } from 'src/helpers/query-builder'
 
-// const StringComparisonInput = createStringFieldComparison({})
-// const IntComparisonInput = createIntFieldComparison({})
-
-const FilterInputNew = builder.inputRef('Example3FilterInputNew').implement({
+const FilterInput = builder.inputRef('Example3FilterInput').implement({
   fields: (t) => ({
     name: t.field({ type: StringComparisonInput }),
     birthdate: t.field({ type: StringComparisonInput }),
     height: t.field({ type: IntComparisonInput }),
-    and: t.field({ type: [FilterInputNew] }),
-    or: t.field({ type: [FilterInputNew] }),
+    and: t.field({ type: [FilterInput] }),
+    or: t.field({ type: [FilterInput] }),
   }),
 })
 
@@ -68,26 +63,11 @@ builder.queryFields((t) => ({
   example3: t.field({
     type: [Example3],
     args: {
-      filter: t.arg({ type: FilterInputNew, required: false }),
+      filter: t.arg({ type: FilterInput, required: false }),
       paging: t.arg({ type: Paging, required: false }),
       sorting: t.arg({ type: [SortingInput], required: false }),
     },
-    resolve: (parent, args, context, info) => {
-      const selectFields = getSelectFields(info)
-      const query = generateSqlQuery({
-        select: selectFields,
-        schema: 'example_schema',
-        tableName: 'example3',
-        filter: args.filter,
-        paging: args.paging,
-        sorting: args.sorting as unknown as {
-          field: string
-          direction: string
-        }[],
-      })
-
-      console.log({ selectFields, query })
-
+    resolve: () => {
       return [
         {
           name: 'test',
